@@ -1,0 +1,14 @@
+[Unit]
+Description=Get Host Info interface Service
+Requires=host_info.service
+After=host_info.service
+
+[Service]
+ExecStart=get_host_info
+SyslogIdentifier=get_host_info
+Restart=always
+RestartSec=5s
+
+
+[Install]
+WantedBy=multi-user.target

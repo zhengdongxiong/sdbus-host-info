@@ -1,0 +1,29 @@
+
+PHONY := __libinst
+__libinst :
+
+
+include scripts/Makefile.include
+
+
+# Install lib
+# ---------------------------------------------------------------------------
+inst_libdir := $(inst_path)/lib
+link_lib    := $(addprefix $(inst_libdir)/, $(notdir $(shlib)))
+shlib_ver   := $(addsuffix .$(version), $(notdir $(shlib)))
+
+#echo_libinst = INSTALL $(lib_dir)
+#cmd_libinst = mkdir -p $(inst_libdir); \
+	cp -r $(arlib) $(shlib) $(inst_libdir); \
+	mv $(link_lib) $(addprefix $(inst_libdir)/, $(shlib_ver)); \
+	ln -sf $(shlib_ver) $(link_lib)
+
+echo_libinst = $(inst_path)/lib
+cmd_libinst =  mkdir -p $(inst_libdir); cp -r $(arlib) $(inst_libdir);
+
+
+__libinst :
+	$(call cmd,libinst)
+
+
+.PHONY: $(PHONY)

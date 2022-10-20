@@ -1,0 +1,15 @@
+[Unit]
+Description=Host Info interface Service
+
+
+[Service]
+ExecStart=host_info
+KillMode=process
+Restart=always
+SyslogIdentifier=host_info
+Type=dbus
+BusName=com.gxmicro.HostInfo
+
+
+[Install]
+WantedBy=multi-user.target
