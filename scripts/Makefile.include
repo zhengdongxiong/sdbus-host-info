@@ -1,7 +1,6 @@
 
 src := $(dir)
 
-
 subdir   :=
 obj      :=
 obj_deps :=
@@ -14,13 +13,11 @@ sublib   :=
 arlib    :=
 shlib    :=
 
-
 # Include subdir Makefile
 # ---------------------------------------------------------------------------
 build-dir  :=
 build-file := $(src)/Makefile
 sinclude $(build-file)
-
 
 # Object variables
 # ---------------------------------------------------------------------------
@@ -45,7 +42,6 @@ obj_deps := $(obj:%.o=%.d)
 single   := $(patsubst %.o, %, $(single))
 multi    := $(patsubst %.o, %, $(multi))
 
-
 # Add subdir path
 # ---------------------------------------------------------------------------
 subdir   := $(addprefix $(dir)/, $(subdir))
@@ -60,14 +56,12 @@ sublib   := $(addprefix $(dir)/, $(sublib))
 arlib    := $(addprefix $(dir)/, $(arlib))
 shlib    := $(addprefix $(dir)/, $(shlib))
 
-
 # CMD define
 #         echo_xxxx will be printed
 #         cmd_xxxx will be executed
 # ---------------------------------------------------------------------------
 echo_cmd = $(if $(echo_$(1)), echo "    $(echo_$(1))";)
 cmd = $(Q)$(if $(cmd_$(1)), $(echo_cmd)$(cmd_$(1)))
-
 
 ###
 # Shorthand for $(Q)$(MAKE) -f scripts/Makefile.build dir=

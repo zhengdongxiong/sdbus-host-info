@@ -2,9 +2,7 @@
 PHONY := __build
 __build :
 
-
 include scripts/Makefile.include
-
 
 # Compile and assemble
 # ---------------------------------------------------------------------------
@@ -51,7 +49,6 @@ cmd_shlib = $(CC) -shared $(SHLIB_FLAGS) $^ \
 echo_deps = GEN     $@
 cmd_deps = $(CC) -MM $< > $@
 
-
 __build : $(subdir) $(curlib) $(arlib) $(shlib) $(single) $(multi)
 	@:
 
@@ -80,15 +77,13 @@ $(multi) :
 	$(call cmd,ld_multi)
 $(call rule-multi, $(multi))
 
-$(dir)/%.d : $(src)/%.c
-	$(call cmd,deps)
+# Dependency
+# ---------------------------------------------------------------------------
 sinclude $(lib_deps)
 sinclude $(obj_deps)
 
-
 .FORCE :
 .SECONDARY :
-
 
 PHONY += $(subdir) FORCE
 

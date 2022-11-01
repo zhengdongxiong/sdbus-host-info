@@ -2,18 +2,14 @@
 PHONY := __hdrinst
 __hdrinst :
 
-
 include scripts/Makefile.include
-
 
 # Install header
 # ---------------------------------------------------------------------------
 echo_hdrinst = INSTALL $(hdr_dir)
 cmd_hdrinst = mkdir -p $(inst_path); cp -r $(hdr_dir) $(inst_path)
 
-
 __hdrinst :
 	$(call cmd,hdrinst)
-
 
 .PHONY: $(PHONY)

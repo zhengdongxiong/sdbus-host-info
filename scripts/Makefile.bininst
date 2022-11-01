@@ -2,9 +2,7 @@
 PHONY := __bininst
 __bininst :
 
-
 include scripts/Makefile.include
-
 
 # Install bin
 # ---------------------------------------------------------------------------
@@ -14,7 +12,6 @@ inst_bin    := $(single) $(multi)
 echo_bininst = INSTALL $@
 cmd_bininst = mkdir -p $(inst_bindir); cp -r $@ $(inst_bindir)
 
-
 __bininst : $(subdir) $(inst_bin)
 	@:
 
@@ -23,7 +20,6 @@ $(subdir) :
 
 $(inst_bin) :
 	$(call cmd,bininst)
-
 
 PHONY += $(subdir) $(inst_bin)
 

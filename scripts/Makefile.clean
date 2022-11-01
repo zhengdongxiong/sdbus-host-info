@@ -2,9 +2,7 @@
 PHONY := __clean
 __clean :
 
-
 include scripts/Makefile.include
-
 
 # Clean
 # ---------------------------------------------------------------------------
@@ -14,13 +12,11 @@ clean_files := $(obj) $(obj_deps) $(single) $(multi) \
 echo_clean = CLEAN   $(src)
 cmd_clean = rm -rf $(clean_files)
 
-
 __clean : $(subdir)
 	$(call cmd,clean)
 
 $(subdir) :
 	$(Q)$(MAKE) $(clean)=$@
-
 
 PHONY += $(subdir)
 

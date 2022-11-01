@@ -2,9 +2,7 @@
 PHONY := __libinst
 __libinst :
 
-
 include scripts/Makefile.include
-
 
 # Install lib
 # ---------------------------------------------------------------------------
@@ -21,9 +19,7 @@ shlib_ver   := $(addsuffix .$(version), $(notdir $(shlib)))
 echo_libinst = $(inst_path)/lib
 cmd_libinst =  mkdir -p $(inst_libdir); cp -r $(arlib) $(inst_libdir);
 
-
 __libinst :
 	$(call cmd,libinst)
-
 
 .PHONY: $(PHONY)

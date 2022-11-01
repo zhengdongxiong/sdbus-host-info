@@ -37,7 +37,7 @@ CC       = $(CROSS_COMPILE)gcc
 LD       = $(CROSS_COMPILE)ld
 AR       = $(CROSS_COMPILE)ar
 CPPFLAGS += -I $(hdr_dir)/
-CFLAGS   += -fPIC
+CFLAGS   += -MMD -fPIC
 LDFLAGS  += #-L $(lib_dir)/
 LIBS     += -lsystemd -lpthread #-l$(libname)
 
@@ -56,7 +56,6 @@ hdr_inst   := $(addprefix _hdrinst_, $(hdr_dir))
 lib_inst   := $(addprefix _libinst_, $(lib_dir))
 bin_inst   := $(addprefix _bininst_, $(src_dir))
 uninst_dir := $(addprefix _uninst_, $(inst_path))
-
 
 all : $(build_lib) $(build_bin)
 
@@ -87,7 +86,6 @@ $(bin_inst) :
 $(uninst_dir) :
 	$(Q)$(MAKE) $(uninst)=$(patsubst _uninst_%,%,$@)
 
-
 help :
 	@echo "Build targets :"
 	@echo "	all		- Build all code (default)"
@@ -96,7 +94,6 @@ help :
 	@echo "	clean		- Remove most generated files"
 
 FORCE :
-
 
 PHONY += prepare clean install uninstall help FORCE
 PHONY += $(build_bin) $(clean_dir) $(hdr_inst) $(lib_inst) $(bin_inst) $(uninst_dir)

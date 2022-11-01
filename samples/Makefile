@@ -1,5 +1,2 @@
 
-
-
 subdir += sdbus
-

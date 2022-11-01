@@ -2,9 +2,7 @@
 PHONY := __uninst
 __uninst :
 
-
 include scripts/Makefile.include
-
 
 # Uninstall
 # ---------------------------------------------------------------------------
@@ -13,9 +11,7 @@ uninst_path := $(inst_path)
 echo_uninst = UNINST  $(uninst_path)
 cmd_uninst = rm -rf $(uninst_path)
 
-
 __uninst :
 	$(call cmd,uninst)
-
 
 .PHONY: $(PHONY)
