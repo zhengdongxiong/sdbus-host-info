@@ -10,6 +10,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include "host_info.h"
+
 #define ERR_PRINT(fmt, ...)     fprintf(stderr, fmt, ##__VA_ARGS__)
 
 #ifdef DEBUG

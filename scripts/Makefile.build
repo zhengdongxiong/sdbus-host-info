@@ -44,11 +44,6 @@ echo_shlib = LLD     $@
 cmd_shlib = $(CC) -shared $(SHLIB_FLAGS) $^ \
 	$(SHLIB_LIBS) -o $@ #$(filter-out FORCE, $^)
 
-# Dependency
-# ---------------------------------------------------------------------------
-echo_deps = GEN     $@
-cmd_deps = $(CC) -MM $< > $@
-
 __build : $(subdir) $(curlib) $(arlib) $(shlib) $(single) $(multi)
 	@:
 

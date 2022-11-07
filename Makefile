@@ -25,7 +25,7 @@ export libname version SHLIB_FLAGS SHLIB_LIBS
 # ---------------------------------------------------------------------------
 hdr_dir   := include
 lib_dir   := #lib
-src_dir   := src
+src_dir   := source
 inst_path := install
 misc_dir  := samples
 
