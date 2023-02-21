@@ -78,23 +78,23 @@ clean := -f scripts/Makefile.clean dir
 ###
 # Shorthand for $(Q)$(MAKE) -f scripts/Makefile.hdrinst dir=
 # Usage:
-# $(Q)$(MAKE) $(inst)=dir
+# $(Q)$(MAKE) $(hdrinst)=dir
 hdrinst := -f scripts/Makefile.hdrinst dir
 
 ###
 # Shorthand for $(Q)$(MAKE) -f scripts/Makefile.libinst dir=
 # Usage:
-# $(Q)$(MAKE) $(inst)=dir
+# $(Q)$(MAKE) $(libinst)=dir
 libinst := -f scripts/Makefile.libinst dir
 
 ###
 # Shorthand for $(Q)$(MAKE) -f scripts/Makefile.bininst dir=
 # Usage:
-# $(Q)$(MAKE) $(inst)=dir
+# $(Q)$(MAKE) $(bininst)=dir
 bininst := -f scripts/Makefile.bininst dir
 
 ###
 # Shorthand for $(Q)$(MAKE) -f scripts/Makefile.uninst dir=
 # Usage:
-# $(Q)$(MAKE) $(inst)=dir
+# $(Q)$(MAKE) $(uninst)=dir
 uninst := -f scripts/Makefile.uninst dir
