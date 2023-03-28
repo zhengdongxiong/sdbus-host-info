@@ -1,85 +1,44 @@
 
 PHONY := __build
-__build :
+__build:
 
 include scripts/Makefile.include
 
-# Compile and assemble
-# ---------------------------------------------------------------------------
-echo_cc = CC      $@
-cmd_cc = $(CC) $(CPPFLAGS) $(DIR_CPPFLGAS) $(CPPFLAGS_$(@F)) \
-	$(CFLAGS) $(DIR_CFLGAS) $(CFLAGS_$(@F)) -c $< -o $@
-
-# Linking
-# ---------------------------------------------------------------------------
-echo_ld = LD      $@
-cmd_ld = $(CC) $(LDFLAGS) $(DIR_LDFLAGS) $(LDFLAGS_$(@F)) $< \
-	$(LIBS) $(LIBS_$(@F)) -o $@
-
-# Linking multi file
-# ---------------------------------------------------------------------------
-echo_ld_multi = LD      $@
-cmd_ld_multi = $(CC) $(LDFLAGS) $(DIR_LDFLAGS) $(LDFLAGS_$(@F)) $^ \
-	$(LIBS) $(LIBS_$(@F)) -o $@  #$(filter-out FORCE, $^)
-
-define rule-multi
-$(foreach m, $(notdir $1), \
-	$(eval $(dir)/$m : \
-	$(addprefix $(dir)/, $($(m)-objs))))
-endef
-
-# Compile libs
-# ---------------------------------------------------------------------------
-echo_lib_obj = LD      $@
-cmd_lib_obj = $(LD) -r $^ -o $@  #$(filter-out FORCE, $^)
-
-# Archive
-# ---------------------------------------------------------------------------
-echo_ar = AR      $@
-cmd_ar = $(AR) rcsPT $@ $^ #$(filter-out FORCE, $^)
-
-# Share library
-# ---------------------------------------------------------------------------
-echo_shlib = LLD     $@
-cmd_shlib = $(CC) -shared $(SHLIB_FLAGS) $^ \
-	$(SHLIB_LIBS) -o $@ #$(filter-out FORCE, $^)
-
-__build : $(subdir) $(curlib) $(arlib) $(shlib) $(single) $(multi)
+__build: $(libdir) $(lib) $(curlib) $(arlib) $(shlib) \
+	$(objdir) $(obj) $(single) $(multi)
 	@:
 
-$(subdir) :
+$(libdir) $(objdir):
 	$(Q)$(MAKE) $(build)=$@
 
-$(dir)/%.o : $(src)/%.c
+$(dst)/%.o: $(src)/%.c
 	$(call cmd,cc)
 
-$(sublib) : $(subdir)
-	@:
-
-$(dir)/lib%.o : $(lib) $(sublib)
-	$(call cmd,lib_obj)
-
-$(dir)/%.a : $(src)/%.o
-	$(call cmd,ar)
-
-$(dir)/%.so : $(src)/%.o
-	$(call cmd,shlib)
-
-$(dir)/% : $(src)/%.o
+$(dst)/%: $(src)/%.o
 	$(call cmd,ld)
+	$(call cmd,binorder)
 
-$(multi) :
+$(multi):
 	$(call cmd,ld_multi)
+	$(call cmd,binorder)
 $(call rule-multi, $(multi))
 
+$(dst)/lib%.o: $(lib) $(sublib)
+	$(call cmd,lib_obj)
+
+$(dst)/%.a: $(src)/%.o
+	$(call cmd,ar)
+
+$(dst)/%.so: $(src)/%.o
+	$(call cmd,shlib)
+
 # Dependency
-# ---------------------------------------------------------------------------
-sinclude $(lib_deps)
-sinclude $(obj_deps)
+# ===========================================================================
+sinclude $(deps)
 
-.FORCE :
-.SECONDARY :
+FORCE:
+.SECONDARY:
 
-PHONY += $(subdir) FORCE
+PHONY += $(libdir) $(objdir) FORCE
 
 .PHONY: $(PHONY)

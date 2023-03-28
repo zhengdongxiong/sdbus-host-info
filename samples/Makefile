@@ -1,2 +1,2 @@
 
-subdir += sdbus
+objdir += sdbus

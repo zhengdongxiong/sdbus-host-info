@@ -1,0 +1,20 @@
+
+PHONY := __genjs
+__genjs:
+
+include scripts/Makefile.include
+
+__genjs: $(libdir) $(objdir) $(obj) $(lib)
+	@:
+
+$(libdir) $(objdir):
+	$(Q)$(MAKE) $(genjs)=$@
+
+$(dst)/%.o: $(src)/%.c FORCE
+	$(call cmd,gencmd)
+
+FORCE:
+
+PHONY += $(libdir) $(objdir) FORCE
+
+.PHONY: $(PHONY)
