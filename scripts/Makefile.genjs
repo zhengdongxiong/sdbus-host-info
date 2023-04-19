@@ -4,10 +4,10 @@ __genjs:
 
 include scripts/Makefile.include
 
-__genjs: $(libdir) $(objdir) $(obj) $(lib)
+__genjs: $(subdir) $(obj) $(lib)
 	@:
 
-$(libdir) $(objdir):
+$(subdir):
 	$(Q)$(MAKE) $(genjs)=$@
 
 $(dst)/%.o: $(src)/%.c FORCE
@@ -15,6 +15,6 @@ $(dst)/%.o: $(src)/%.c FORCE
 
 FORCE:
 
-PHONY += $(libdir) $(objdir) FORCE
+PHONY += $(subdir) FORCE
 
 .PHONY: $(PHONY)

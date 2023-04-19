@@ -1,17 +1,18 @@
 
 src := $(dst)
 
-obj    :=
-objdir :=
-deps   :=
-single :=
-multi  :=
-lib    :=
-curlib :=
-sublib :=
-libdir :=
-arlib  :=
-shlib  :=
+subdir     :=
+obj        :=
+deps       :=
+single     :=
+multi      :=
+lib        :=
+curlib     :=
+sublib     :=
+arlib      :=
+shlib      :=
+order      :=
+order-file :=
 
 # Include subdir Makefile
 # ===========================================================================
@@ -21,16 +22,21 @@ sinclude $(make_file)
 
 # Object variables
 # ===========================================================================
-objdir := $(patsubst %/, %, $(objdir))
-libdir := $(patsubst %/, %, $(libdir))
+subdir := $(patsubst %/, %, $(filter %/, $(obj) $(lib)))
 
-ifneq ($(lib)$(libdir),)
+ifneq ($(lib),)
+lib    := $(filter-out %/, $(lib))
 curlib := lib$(libname).o
-sublib := $(foreach m, $(libdir), $(m)/$(curlib))
+sublib := $(foreach m, $(subdir), $(m)/$(curlib))
 arlib  := lib$(libname).a
-#shlib := lib$(libname).so
-endif #ifneq ($(lib)$(sublib),)
+shlib := lib$(libname).so
+endif #ifneq ($(lib),)
 
+ifneq ($(obj),)
+order-file := $(binorder)
+endif #ifneq ($(obj),)
+
+obj    := $(filter-out %/, $(obj))
 multi  := $(foreach m, $(obj), $(if $($(m:%.o=%)-y), $(m)))
 single := $(filter-out $(multi), $(obj))
 
@@ -38,20 +44,22 @@ obj    := $(single) $(foreach m, $(multi), $($(m:%.o=%)-y))
 deps   := $(obj:%.o=%.d) $(lib:%.o=%.d)
 single := $(patsubst %.o, %, $(single))
 multi  := $(patsubst %.o, %, $(multi))
+order  := $(single) $(multi) $(foreach m, $(subdir), $(subdir)/$(binorder))
 
 # Add subdir path
 # ===========================================================================
-obj    := $(addprefix $(dst)/, $(obj))
-objdir := $(addprefix $(dst)/, $(objdir))
-deps   := $(addprefix $(dst)/, $(deps))
-single := $(addprefix $(dst)/, $(single))
-multi  := $(addprefix $(dst)/, $(multi))
-lib    := $(addprefix $(dst)/, $(lib))
-libdir := $(addprefix $(dst)/, $(libdir))
-curlib := $(addprefix $(dst)/, $(curlib))
-sublib := $(addprefix $(dst)/, $(sublib))
-arlib  := $(addprefix $(dst)/, $(arlib))
-shlib  := $(addprefix $(dst)/, $(shlib))
+subdir     := $(addprefix $(dst)/, $(subdir))
+obj        := $(addprefix $(dst)/, $(obj))
+deps       := $(addprefix $(dst)/, $(deps))
+single     := $(addprefix $(dst)/, $(single))
+multi      := $(addprefix $(dst)/, $(multi))
+lib        := $(addprefix $(dst)/, $(lib))
+curlib     := $(addprefix $(dst)/, $(curlib))
+sublib     := $(addprefix $(dst)/, $(sublib))
+arlib      := $(addprefix $(dst)/, $(arlib))
+shlib      := $(addprefix $(dst)/, $(shlib))
+order      := $(addprefix $(dst)/, $(order))
+order-file := $(addprefix $(dst)/, $(order-file))
 
 ###
 # Shorthand for $(Q)$(MAKE) -f scripts/Makefile.build dst=

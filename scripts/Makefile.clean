@@ -4,12 +4,12 @@ __clean:
 
 include scripts/Makefile.include
 
-__clean: $(libdir) $(objdir)
+__clean: $(subdir)
 	$(call cmd,cleanfiles)
 
-$(libdir) $(objdir):
+$(subdir):
 	$(Q)$(MAKE) $(clean)=$@
 
-PHONY += $(libdir) $(objdir)
+PHONY +=  $(subdir)
 
 .PHONY: $(PHONY)
