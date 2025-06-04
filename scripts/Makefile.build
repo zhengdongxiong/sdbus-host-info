@@ -4,11 +4,11 @@ __build:
 
 include scripts/Makefile.include
 
-__build: $(libdir) $(lib) $(curlib) $(arlib) $(shlib) \
-	$(objdir) $(obj) $(single) $(multi)
+__build: $(subdir) $(lib) $(curlib) $(sublib) $(arlib) $(shlib) \
+	$(obj) $(single) $(multi) $(order-file)
 	@:
 
-$(libdir) $(objdir):
+$(subdir):
 	$(Q)$(MAKE) $(build)=$@
 
 $(dst)/%.o: $(src)/%.c
@@ -16,21 +16,25 @@ $(dst)/%.o: $(src)/%.c
 
 $(dst)/%: $(src)/%.o
 	$(call cmd,ld)
-	$(call cmd,binorder)
 
 $(multi):
 	$(call cmd,ld_multi)
-	$(call cmd,binorder)
 $(call rule-multi, $(multi))
+
+$(sublib): $(subdir)
+	@:
 
 $(dst)/lib%.o: $(lib) $(sublib)
 	$(call cmd,lib_obj)
 
 $(dst)/%.a: $(src)/%.o
-	$(call cmd,ar)
+	$(call cmd,arlib)
 
 $(dst)/%.so: $(src)/%.o
 	$(call cmd,shlib)
+
+$(dst)/$(binorder): $(subdir)
+	$(call cmd,binorder)
 
 # Dependency
 # ===========================================================================
@@ -39,6 +43,6 @@ sinclude $(deps)
 FORCE:
 .SECONDARY:
 
-PHONY += $(libdir) $(objdir) FORCE
+PHONY += $(subdir) $(order-file) FORCE
 
 .PHONY: $(PHONY)

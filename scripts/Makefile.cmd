@@ -3,28 +3,30 @@
 ###
 
 # CMD define
-#         echo_xxxx will be printed
+#         quiet_xxxx will be printed
 #         cmd_xxxx will be executed
 # ===========================================================================
-echo_cmd = $(if $(echo_$(1)), echo "    $(echo_$(1))";)
-cmd = $(Q)$(echo_cmd) $(cmd_$(1))
+quiet_cmd = $(if $(quiet_$(1)), echo "    $(quiet_$(1))";)
+      cmd = $(Q)$(quiet_cmd) $(cmd_$(1))
+#quiet_cmd = $(if $($(quiet)cmd_$(1)), echo "    $($(quiet)cmd_$(1))";)
+#      cmd = @$(quiet_cmd) $(cmd_$(1))
 
 # Compile
 # ===========================================================================
-echo_cc = CC      $@
-cmd_cc = $(CC) $(CFLAGS) $(cflags) \
+quiet_cc = CC      $@
+  cmd_cc = $(CC) $(CFLAGS) $(cflags) \
 	$(cflags_$(@F)) -c $< -o $@
 
 # Linking
 # ===========================================================================
-echo_ld = LD      $@
-cmd_ld = $(CC) $< -o $@ $(LDFLAGS) \
+quiet_ld = LD      $@
+  cmd_ld = $(CC) $< -o $@ $(LDFLAGS) \
 	$(ldflags) $(ldflags_$(@F))
 
 # Linking multi file
 # ===========================================================================
-echo_ld_multi = LD      $@
-cmd_ld_multi = $(CC) $^ -o $@ $(LDFLAGS) \
+quiet_ld_multi = LD      $@
+  cmd_ld_multi = $(CC) $^ -o $@ $(LDFLAGS) \
 	$(ldflags) $(ldflags_$(@F)) #$(filter-out FORCE, $^)
 
 define rule-multi
@@ -35,54 +37,54 @@ endef
 
 # Compile libs
 # ===========================================================================
-echo_lib_obj = LD      $@
-cmd_lib_obj = $(LD) -r $^ -o $@  #$(filter-out FORCE, $^)
+quiet_lib_obj = LD      $@
+  cmd_lib_obj = $(LD) -r $^ -o $@  #$(filter-out FORCE, $^)
 
 # Archive
 # ===========================================================================
-echo_ar = AR      $@
-cmd_ar = $(AR) rcs $@ $^ #$(filter-out FORCE, $^)
+quiet_arlib = AR      $@
+  cmd_arlib = $(AR) rcs $@ $^ #$(filter-out FORCE, $^)
 
 # Share library
 # ===========================================================================
-echo_shlib = LLD     $@
-cmd_shlib = $(CC) -shared $^ -o $@ #$(filter-out FORCE, $^)
+quiet_shlib = LLD     $@
+  cmd_shlib = $(CC) -shared $^ -o $@ #$(filter-out FORCE, $^)
 
-# BIN order
+# bin.order
 # ===========================================================================
-echo_binorder = GEN     $@
-cmd_binorder = echo '$@' >> $(binorder)
+cmd_binorder = { $(foreach m, $(order), \
+	$(if $(filter %/$(binorder), $m), cat $m, echo $m);) :; } | awk '!x[$$0]++' - > $@
 
 # Json
 # ===========================================================================
-clangd_json = compile_commands.json
-clangd_json_py = scripts/genjs.py
+clangd_json    := compile_commands.json
+clangd_json_py := scripts/genjs.py
 
-echo_gencmd = GEN     $(addsuffix .cmd, $@)
-cmd_gencmd = printf '$(addsuffix .cmd, $@) := $(cmd_cc)' > $(addsuffix .cmd, $@)
+quiet_gencmd = GEN     $(addsuffix .cmd, $@)
+  cmd_gencmd = printf '$(addsuffix .cmd, $@) := $(cmd_cc)' > $(addsuffix .cmd, $@)
 
-echo_genjs = GEN     $(clangd_json)
-cmd_genjs = $(PYTHON) $(clangd_json_py)
+quiet_genjs = GEN     $(clangd_json)
+  cmd_genjs = python $(clangd_json_py)
 
 # Clean
 # ===========================================================================
 clean_files := $(obj) $(deps) $(single) $(multi) \
-		$(lib) $(curlib) $(arlib) $(shlib)
+	$(lib) $(curlib) $(arlib) $(shlib) $(order-file) $(deps:%.d=%.o.cmd)
 
-rmfiles := $(binorder) $(clangd_json) $(shell find . -name "*.o.cmd")
-rmdir := .cache
+rmfiles := .cache/ $(clangd_json)
 
 cmd_cleanfiles = rm -rf $(clean_files)
 
-echo_clean = CLEAN
-cmd_clean = rm -rf $(rmfiles) $(rmdir)
+quiet_rmfiles = CLEAN
+  cmd_rmfiles = rm -rf $(rmfiles)
 
 # Install
 # ===========================================================================
 hdrinst := mkdir -p $(inst_path); cp -r $(hdr_dir) $(inst_path);
 #libinst := mkdir -p $(inst_path)/$(lib_dir); cp -r $(wildcard $(lib_dir)/*.a) $(inst_path)/$(lib_dir);
 bininst := mkdir -p $(inst_path)/bin; \
-	   cat $(binorder) | xargs -i cp -r {} $(inst_path)/bin;
+	{ $(foreach m, $(bin_dir), cat $(m)/$(binorder);) :; } \
+	| xargs -i cp -r {} $(inst_path)/bin;
 
 #link_lib    := $(addprefix $(inst_path)/, $(wildcard $(lib_dir)/*.so))
 #shlib_ver   := $(addsuffix .$(version), $(link_lib))
@@ -92,12 +94,12 @@ bininst := mkdir -p $(inst_path)/bin; \
 #	   mv $(link_lib) $(shlib_ver); \
 #	   ln -sf $(shlib_ver) $(link_lib);
 
-echo_inst = INSTALL
-cmd_inst = $(hdrinst) $(libinst) $(bininst)
+quiet_install = INSTALL
+  cmd_install = $(hdrinst) $(libinst) $(bininst)
 
 # Uninstall
 # ===========================================================================
 uninst_path := $(inst_path)
 
-echo_uninst = UNINSTALL
-cmd_uninst = rm -rf $(uninst_path)
+quiet_uninstall = UNINSTALL
+  cmd_uninstall = rm -rf $(uninst_path)
